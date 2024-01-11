@@ -1,5 +1,6 @@
 import random
 from pieces import *
+import time
 
 
 class BlockGame:
@@ -15,13 +16,16 @@ class BlockGame:
         self.current_pieces = [
             self.random_piece(), self.random_piece(), self.random_piece()]  # You always have 3 pieces you can choose between to play.
         self.failed_turns = 0
+        self.game_over = False
 
     def display_board(self):
 
         COLOURS = ["\033[31m", "\033[32m", "\u001b[33m", "\u001b[34m",
                    "\u001b[35m", "\u001b[36m", "\033[1;34m", "\033[1;31m"]
         RESET = "\033[0m"
-        print(self.score, self.failed_turns)
+        print('Score:', self.score, "Failed turns:", self.failed_turns)
+        if self.game_over:
+            print("GAME OVER MAN, GAME OVER")
         for row in self.board:
             row_str = ' '.join(
                 f"{COLOURS[cell - 1]}■{RESET}" if cell > 0 else "□" for cell in row)
@@ -110,6 +114,16 @@ class BlockGame:
                         return False
         return True
 
+    def is_game_over(self):
+
+        for x in range(0, self.size):
+            for y in range(0, self.size):
+                for piece_number in self.current_pieces:
+                    piece = self.PIECE_LIST[piece_number]
+                    if self.can_place_piece(piece, x, y):
+                        return False
+        return True
+
     def make_move(self, piece_number, x, y):
 
         piece = self.PIECE_LIST[self.current_pieces[piece_number]]
@@ -121,6 +135,7 @@ class BlockGame:
             # Score increase by 10 for each sub block fo a piece.
             self.score += self.count_non_zero(piece) * 10
             self.score_board()
+            self.game_over = self.is_game_over()
         else:
             self.failed_turns += 1
 
@@ -131,8 +146,14 @@ class BlockGame:
 new_game = BlockGame()
 
 
-for i in range(0, 2000):
-    new_game.make_move(1, (random.randint(0, 10) + i) %
-                       11, (random.randint(0, 20) + i) % 11)
+while (not new_game.game_over):
+    move = new_game.make_move(
+        random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
+    print("\033c", end="")
+    new_game.display_board()
+    time.sleep(0.01)  # Adjust the delay time as needed
 
-new_game.display_board()
+
+# for _ in range(0, 1_000_000_000):
+#     move = new_game.make_move(
+#         random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
