@@ -17,8 +17,15 @@ class BlockGame:
         self.failed_turns = 0
 
     def display_board(self):
+
+        COLOURS = ["\033[31m", "\033[32m", "\u001b[33m", "\u001b[34m",
+                   "\u001b[35m", "\u001b[36m", "\033[1;34m", "\033[1;31m"]
+        RESET = "\033[0m"
+
         for row in self.board:
-            print(' '.join("■" if cell == 1 else "□" for cell in row))
+            row_str = ' '.join(
+                f"{COLOURS[cell - 1]}■{RESET}" if cell > 0 else "□" for cell in row)
+            print(row_str)
 
     def random_piece(self):
         return random.randint(0, len(self.PIECE_LIST) - 1)
@@ -30,10 +37,10 @@ class BlockGame:
         # Check if y coordinate is within the board boundaries
         is_y_valid = 0 <= y < self.size
 
-        # Check if the cell at (x, y) is unoccupied (i.e., equals 0)
-        is_cell_unoccupied = self.board[x][y] == 0
+        if is_x_valid and is_y_valid:
+            return self.board[x][y] == 0
 
-        return is_x_valid and is_y_valid and is_cell_unoccupied
+        return False
 
     def can_place_piece(self, piece, anchor_x, anchor_y):
         piece_center = len(piece) // 2
@@ -41,7 +48,7 @@ class BlockGame:
             for j in range(len(piece[i])):
                 board_x = anchor_x + i - piece_center
                 board_y = anchor_y + j - piece_center
-                if piece[i][j] == 1 and not self.is_valid_position(board_x, board_y):
+                if piece[i][j] > 0 and not self.is_valid_position(board_x, board_y):
                     return False
         return True
 
@@ -51,9 +58,9 @@ class BlockGame:
             for j in range(len(piece[i])):
                 board_x = anchor_x + i - piece_center
                 board_y = anchor_y + j - piece_center
-                if piece[i][j] == 1:
+                if piece[i][j] > 0:
                     if self.is_valid_position(board_x, board_y):
-                        self.board[board_x][board_y] = 1
+                        self.board[board_x][board_y] = piece[i][j]
                     else:
                         return False
         return True
@@ -78,6 +85,7 @@ class BlockGame:
 new_game = BlockGame()
 
 
-new_game.make_move(1, 4, 5)
+for i in range(0, 10):
+    new_game.make_move(1, (4 + i) % 11, (5 + i) % 11)
 
 new_game.display_board()
