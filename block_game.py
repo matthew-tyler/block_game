@@ -1,11 +1,38 @@
 import random
+from typing import List, Union
 from pieces import *
 import time
 
 
 class BlockGame:
+    """
+    A class to represent the block puzzle game.
+
+    Attributes:
+        size (int): The size of the game board (default is 10x10).
+        PIECE_LIST (list): A list of available pieces for the game.
+        board (list): The current state of the game board.
+        score (int): The current score of the player.
+        current_pieces (list): The list of 3 pieces available to the player.
+        failed_turns (int): The number of turns where the player failed to place a piece.
+        game_over (bool): Indicates whether the game is over.
+
+    Methods:
+        display_board(): Prints the current state of the game board along with score and other info.
+        random_piece(): Returns a random piece from the PIECE_LIST.
+        is_valid_position(x, y): Checks if a position on the board is valid for placement.
+        can_place_piece(piece, anchor_x, anchor_y): Checks if a piece can be placed at a given position.
+        count_non_zero(lst): Counts the non-zero elements in a list.
+        score_board(): Updates the score based on completed rows and columns.
+        place_piece(piece, anchor_x, anchor_y): Places a piece on the board.
+        is_game_over(): Checks if the game is over.
+        make_move(piece_number, x, y): Makes a move in the game.
+    """
 
     def __init__(self) -> None:
+        """
+        Initializes the BlockGame with a default 10x10 board and other game settings.
+        """
         # Can add this to the constuctor later if we wanted to create larger boards.
         self.size = 10
         self.PIECE_LIST = [P1, P2, P3, P4, P5, P6, P7, P8, P9,
@@ -18,7 +45,11 @@ class BlockGame:
         self.failed_turns = 0
         self.game_over = False
 
-    def display_board(self):
+    def display_board(self) -> None:
+        """
+        Prints the current state of the board, including each cell's status, the current score, and failed turn count. 
+        Displays the current pieces available for placement.
+        """
 
         COLOURS = ["\033[31m", "\033[32m", "\u001b[33m", "\u001b[34m",
                    "\u001b[35m", "\u001b[36m", "\033[1;34m", "\033[1;31m"]
@@ -29,12 +60,35 @@ class BlockGame:
         for row in self.board:
             row_str = ' '.join(
                 f"{COLOURS[cell - 1]}■{RESET}" if cell > 0 else "□" for cell in row)
-            print(row_str)
+            print('    ', row_str)
 
-    def random_piece(self):
+        for row in range(5):  # Each piece is 5 rows high
+            for piece_number in self.current_pieces:
+                piece = self.PIECE_LIST[piece_number]
+                piece_str = ' '.join(
+                    f"{COLOURS[cell - 1]}■{RESET}" if cell > 0 else " " for cell in piece[row]
+                )
+                print(piece_str, end='  ')  # Adjust the spacing as needed
+            print()  # Move to the next line after printing one row of each piece
+
+    def random_piece(self) -> int:
+        """
+        Selects and returns a random piece from the available PIECE_LIST.
+        """
+
         return random.randint(0, len(self.PIECE_LIST) - 1)
 
-    def is_valid_position(self, x, y):
+    def is_valid_position(self, x: int, y: int) -> bool:
+        """
+        Checks if the given position (x, y) is within the board boundaries and is empty.
+
+        Args:
+            x (int): X-coordinate on the board.
+            y (int): Y-coordinate on the board.
+
+        Returns:
+            bool: True if the position is valid and empty, False otherwise.
+        """
         # Check if x coordinate is within the board boundaries
         is_x_valid = 0 <= x < self.size
 
@@ -46,7 +100,18 @@ class BlockGame:
 
         return False
 
-    def can_place_piece(self, piece, anchor_x, anchor_y):
+    def can_place_piece(self, piece: List[List[int]], anchor_x: int, anchor_y: int) -> bool:
+        """
+        Determines if a piece can be placed at the given position without overlapping existing pieces.
+
+        Args:
+            piece (list): The piece to be placed.
+            anchor_x (int): X-coordinate of the anchor point for the piece.
+            anchor_y (int): Y-coordinate of the anchor point for the piece.
+
+        Returns:
+            bool: True if the piece can be placed, False otherwise.
+        """
         piece_center = len(piece) // 2
         for i in range(len(piece)):
             for j in range(len(piece[i])):
@@ -56,7 +121,15 @@ class BlockGame:
                     return False
         return True
 
-    def count_non_zero(self, lst):
+    def count_non_zero(self, lst: Union[List[int], List[List[int]]]) -> int:
+        """Counts the number of non-zero elements in a list. Handles both 1D and 2D lists.
+
+            Args:
+                lst (list): The list (1D or 2D) to count non-zero elements in.
+
+            Returns:
+                int: The count of non-zero elements in the list.
+        """
 
         non_zero_count = 0
         # Check if the first element of lst is a list (indicating it's a 2D list)
@@ -73,7 +146,11 @@ class BlockGame:
 
         return non_zero_count
 
-    def score_board(self):
+    def score_board(self) -> None:
+        """
+        Updates the score by identifying and clearing filled rows and columns on the board. 
+        The score increases based on the number of rows and columns cleared.
+        """
 
         rows_to_clear = []
         cols_to_clear = []
@@ -101,7 +178,18 @@ class BlockGame:
             for row in range(self.size):
                 self.board[row][col] = 0
 
-    def place_piece(self, piece, anchor_x, anchor_y):
+    def place_piece(self, piece: List[List[int]], anchor_x: int, anchor_y: int) -> bool:
+        """
+        Places a piece on the board at the specified anchor position.
+
+        Args:
+            piece (list): The piece to be placed.
+            anchor_x (int): X-coordinate of the anchor point for the piece.
+            anchor_y (int): Y-coordinate of the anchor point for the piece.
+
+        Returns:
+            bool: True if the piece was successfully placed, False if the placement is invalid.
+        """
         piece_center = len(piece) // 2
         for i in range(len(piece)):
             for j in range(len(piece[i])):
@@ -114,7 +202,13 @@ class BlockGame:
                         return False
         return True
 
-    def is_game_over(self):
+    def is_game_over(self) -> bool:
+        """
+        Checks if there are any valid moves left. The game is over if no current pieces can be placed.
+
+        Returns:
+            bool: True if the game is over, False otherwise.
+        """
 
         for x in range(0, self.size):
             for y in range(0, self.size):
@@ -124,7 +218,19 @@ class BlockGame:
                         return False
         return True
 
-    def make_move(self, piece_number, x, y):
+    def make_move(self, piece_number: int, x: int, y: int) -> List[Union[List[List[int]], List[int], int]]:
+        """
+        Processes a player's move by attempting to place a specified piece at given coordinates. 
+        Updates the game state including the score and checks if the game is over.
+
+        Args:
+            piece_number (int): The index of the piece in current_pieces to be placed.
+            x (int): X-coordinate of the anchor point for the piece.
+            y (int): Y-coordinate of the anchor point for the piece.
+
+        Returns:
+            list: The new state of the game including the board, current pieces, score, and failed turn count.
+        """
 
         piece = self.PIECE_LIST[self.current_pieces[piece_number]]
 
@@ -151,9 +257,9 @@ while (not new_game.game_over):
         random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
     print("\033c", end="")
     new_game.display_board()
-    time.sleep(0.01)  # Adjust the delay time as needed
+    time.sleep(0.1)  # Adjust the delay time as needed
 
 
-# for _ in range(0, 1_000_000_000):
-#     move = new_game.make_move(
-#         random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
+# # for _ in range(0, 1_000_000_000):
+# #     move = new_game.make_move(
+# #         random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
