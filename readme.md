@@ -1,6 +1,6 @@
 # Block Game
 
-My partner and I like to play phone games and you could say we get a little competitive. Our current obsession is with a game on the android store called Block Puzzle. It's a tetris like casual game where you place tetrominos on a 10x10 grid attempting to clear rows/columns. 
+My partner and I like to play phone games, and you could say we get a little competitive. Our current obsession is with a game on the android store called Block Puzzle. It's a tetris like casual game where you place tetrominos on a 10x10 grid attempting to clear rows/columns. 
 
 As it stands, my high score is 176,450. My partner is sitting at 421,200. It's become quite clear to both of us that I will never reach those heights... through conventional means. But, what I do have is a very particular set of skills. Skills I have honed over a long university career. Skills that make me a nightmare for casual phone gaming before bed time. 
 
