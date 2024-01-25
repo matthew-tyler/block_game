@@ -28,12 +28,21 @@ Players have a choice of three pieces to place at any given time. The phone game
 
 Scoring in the game is straightforward. Each subblock placed on the grid is worth 10 points. However, the significant scores come from clearing rows and columns. Clearing any single row or column earns 100 points. Clearing multiple rows or columns simultaneously yields higher scores, as observed:
 
+```
 1 row/column = 100 points
 2 rows/columns = 300 points
 3 rows/columns = 600 points
 4 rows/columns = 1000 points
 5 rows/columns = 1500 points
 6 rows/columns = 2100 points
+```
 
 It's worth noting that players can't clear more than 6 lines at once. This scoring system is based on the sum of the first 'n' natural numbers, multiplied by 100.
 
+Putting all of that together we end up with a playable version of the game:
+
+![random_agent3](https://github.com/matthew-tyler/block_game/assets/101033922/e44910e4-9879-4816-ab43-7de22d773faf)
+
+But as you can see from the GIF, just making random moves is not a good stratergy. For that we'll need some machine learning. 
+
+## The AI
