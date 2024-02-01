@@ -35,15 +35,17 @@ class BlockGame:
         """
         # Can add this to the constuctor later if we wanted to create larger boards.
         self.size = 10
-        self.PIECE_LIST = [P1, P2, P3, P4, P5, P6, P7, P8, P9,
-                           P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28]
+        self.PIECE_LIST = PIECE_LIST
+        self.reset()
 
+    def reset(self) -> None:
         self.board = [[0 for _ in range(self.size)] for _ in range(self.size)]
         self.score = 0
         self.current_pieces = [
             self.random_piece(), self.random_piece(), self.random_piece()]  # You always have 3 pieces you can choose between to play.
         self.failed_turns = 0
         self.game_over = False
+        self.history = []
 
     def display_board(self) -> None:
         """
@@ -245,19 +247,21 @@ class BlockGame:
         else:
             self.failed_turns += 1
 
+        state = [self.board, self.current_pieces,
+                 self.score, self.failed_turns]
+        self.history.append(state)
         # then need to return the new state of the game
-        return [self.board, self.current_pieces, self.score, self.failed_turns]
+        return state
 
 
-new_game = BlockGame()
+# new_game = BlockGame()
 
-
-while (not new_game.game_over):
-    move = new_game.make_move(
-        random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
-    print("\033c", end="")
-    new_game.display_board()
-    time.sleep(0.1)  # Adjust the delay time as needed
+# while (not new_game.game_over):
+#     move = new_game.make_move(
+#         random.randint(0, 2), (random.randint(0, 10)), (random.randint(0, 10)))
+#     print("\033c", end="")
+#     new_game.display_board()
+#     time.sleep(0.2)  # Adjust the delay time as needed
 
 
 # # for _ in range(0, 1_000_000_000):
